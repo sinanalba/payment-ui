@@ -5,12 +5,12 @@ const Payments = () : JSX.Element => {
 
     interface Transaction {
         id: number;
-    }
+        date: string;
+        country: string;
+        currency: string;
+        amount: number;
+      }
 
-    const tableStyle = {
-        border: "10px",
-        color:"blue"
-    }
 
     const [visible, setVisible] = useState(true);
     const toggleVisibility = () => {
@@ -22,30 +22,42 @@ const Payments = () : JSX.Element => {
 
 
     useEffect(() => {
-        fetch('transaction.json')
-          .then(response => response.json())
-          .then(data => setData(data));
+        fetch('/transaction.json')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Failed to fetch data');
+            }
+            return response.json();
+          })
+          .then(data => setData(data))
+          .catch(error => console.error('Error fetching data:', error));
       }, []);
 
     return (
         <div>        
 
 
-            <button onClick={toggleVisibility}> {visible ? 'hide' : 'show'} Search</button>
-            <table style= {{display : visible ? 'block' : 'none' }} >
+            <button onClick={toggleVisibility}> {visible ? 'Hide' : 'Show'} Search</button>
+            <table style= {{display : visible ? 'table' : 'none' }} >
                 <thead>
-                    <th>Id</th>
-                    <th>Date</th>
-                    <th>Country</th>
-                    <th>Currency</th>
-                    <th>Amount</th>
+                    <tr>
+                        <th>Id</th>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>Currency</th>
+                        <th>Amount</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    {data.map(item => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
-                        </tr>
-                    ))}
+                {data.map((item) => (
+                    <tr key={item.id}>
+                        <td>{item.id}</td>
+                        <td>{item.date}</td>
+                        <td>{item.country}</td>
+                        <td>{item.currency}</td>
+                        <td>{item.amount}</td>
+                    </tr>
+                ))}
                 </tbody>
 
             </table>
